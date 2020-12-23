@@ -66,11 +66,10 @@ The project is structured as follow:
 
 ![db schema](assests/tree.png)
 
-* `dags` folder contains two dag files:
-  * `dag_songs.py` : defines a DAG that creates all the tables, copies song data into staging table, and load songs and artists data into `songs`and `artists` tables resp.
-    	 ![dag](assests/songs.png)
-  * `dag_events.py` : defines a DAG that copies events data into staging table, and load songplays, time and users data into `songplays`, `time` and `users` tables resp.
- ![dag](assests/events.png)
+* `dags` folder contains a dag file:
+  * `etl_dag.py` : defines a DAG that creates all the tables, copies song data into staging table, and load fact and dimension tables and finally run data quality checks
+    	 ![dag](assests/dag.png)
+  
 * `plugins/helpers` folder contains a `sql_queries.py` that defines the sql queries using in the ETL process
 * `plugins/operators` folder contains custom operators definitions:
   * `stage_redshift.py` defines operator for copying data from s3 json files to staging table in Redshift
@@ -86,9 +85,9 @@ The second requirement is to create a redshift cluster and configure the connect
 * the aws connection should be named `aws_credentials`
 * the redshift connection should be named `redshift`
 
-To run the project, first enable the `songs_data_dag` DAG (first diagram above) and trigger the run. This should normally be run once. It'll create all the tables, load songs staging data, and load data into `songs` and `artists` tables. 
+To run the project, first enable the `songs_data_dag` DAG (first diagram above) and trigger the run. This should normally be run once. It'll create all the tables, load staging ables, and load data into fatc and dimensional tables.
 
-Next disable the `songs_data_dag` DAG and enable the `events_data_dag` DAG. This DAG is scheduled to run daily ETL tasks from `2018-11-01` to `2018-11-30`. The tasks include loading the daily events from s3 to staging table, loading data into `songplays`, `users` and `time` tables, and applying data quality checks to detect empty tables.
+Next disable the `songs_data_dag` DAG and enable the `events_data_dag` DAG. This DAG is scheduled to run hourly ETL tasks from `2018-11-01` to `2018-11-30`. The tasks include loading the daily events from s3 to staging table, loading data into `songplays`, `users` and `time` tables, and applying data quality checks to detect empty tables.
 
 If everything went well at the end of the data quality checks uo should have something like this in the end of the log view saying that the Data quality check succeeded  for each table:
 	![quality](assests/quality.png)
