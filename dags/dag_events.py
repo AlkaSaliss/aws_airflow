@@ -22,7 +22,7 @@ default_args = {
 dag = DAG('events_data_dag',
           default_args=default_args,
           description='Load and transform events data in Redshift with Airflow',
-          schedule_interval="@daily",
+          schedule_interval="@hourly",
 		  max_active_runs=1,
         )
 
